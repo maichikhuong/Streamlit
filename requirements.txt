@@ -1,7 +1,6 @@
-# python
 pandas
 numpy
 scikit-learn
-# xgboost
+xgboost
 pickle
-# streamlit
+streamlit
