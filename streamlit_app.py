@@ -8,8 +8,12 @@ with open("model.pkl", "rb") as f:
     model = pickle.load(f)
 
 # Title of the web app
-st.title('Excel File Uploader')
-uploaded_file = st.file_uploader("Upload file", type=["csv"])
+def load_data():
+    st.title('Excel File Uploader')
+    uploaded_file = st.file_uploader("Upload file", type=["csv"])
+    return uploaded_file
+
+uploaded_file = load_data()
 
 if uploaded_file is not None:
     # Read the Excel file
@@ -61,11 +65,17 @@ if uploaded_file is not None:
 
     df_final = st.session_state.df
     df_final['y_proba'] = list_proba
+    df_final['Post Prediction'] = 'Passed'
 
+    option = st.selectbox(
+    'Which your policy number?',
+    df_final['customer_id'])
 
-    # # Display the contents of the Excel file
-    # st.write('**Uploaded DataFrame:**')
-    # st.write(df_final)
+    score = df_final[df_final.customer_id == option]['y_proba']
+    postpredict = df_final[df_final.customer_id == option]['Post Prediction']
+
+    'Claim Score: ', round(score.iloc[0], 2)
+    'Post Prediction:', postpredict.iloc[0]
 
 
 
