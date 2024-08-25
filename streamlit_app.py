@@ -4,13 +4,27 @@ from sklearn.preprocessing import StandardScaler
 import pickle
 import streamlit as st
 
-with open("model.pkl", "rb") as f:
-    model = pickle.load(f)
+
+try: 
+    def load_model():
+        st.write("Load Model Uploader")
+        # Create a file uploader widget
+        uploaded_file = st.file_uploader("Upload your pickle file", type=['pkl'])
+        model = pickle.load(uploaded_file)
+        st.write('Pickle file uploaded successfully!')
+
+        return model
+
+    model = load_model()
+
+except:
+    st.write('Upload model have problem')
+
 
 try: 
     # Title of the web app
     def load_data():
-        st.title('Excel File Uploader')
+        st.write('Excel File Uploader')
         uploaded_file = st.file_uploader("Upload file", type=["csv"])
         return uploaded_file
 
