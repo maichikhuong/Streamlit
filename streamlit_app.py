@@ -1,0 +1,72 @@
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+import pickle
+import streamlit as st
+
+with open("model.pkl", "rb") as f:
+    model = pickle.load(f)
+
+# Title of the web app
+st.title('Excel File Uploader')
+uploaded_file = st.file_uploader("Upload file", type=["csv"])
+
+if uploaded_file is not None:
+    # Read the Excel file
+    st.session_state.df = pd.read_csv(uploaded_file)
+
+    columns_dict = {
+    'one_hot': ['country','gender'], 
+    'without_X': ['customer_id']
+    }
+
+    class Processing():
+        def __init__(self, df: pd.DataFrame) -> None:
+            self.df = df
+
+        def one_hot(self, columns_dict: dict):
+    
+            self.df = pd.get_dummies(self.df, columns=columns_dict['one_hot'], drop_first=False)
+
+            return self.df
+        
+        def feature_label(self, columns_dict: dict) -> pd.DataFrame:
+
+            X = self.df.drop(columns = columns_dict['without_X'])
+
+            return X
+
+
+        def scale(self, X) -> pd.DataFrame:
+
+            sc = StandardScaler()
+            X_sc = sc.fit_transform(X)
+
+            return X_sc
+
+    load_df = Processing(df = st.session_state.df)
+    df = load_df.one_hot(columns_dict=columns_dict)
+    X = load_df.feature_label(columns_dict=columns_dict)
+    X_sc = load_df.scale(X)
+
+    y_pred = model.predict(X_sc)
+    y_pred_proba = model.predict_proba(X_sc)
+
+    list_proba = list()
+    for i in range(0, len(y_pred_proba)):
+        if y_pred_proba[i][0] > y_pred_proba[i][1]:
+            list_proba.append(y_pred_proba[i][0])
+        else:
+            list_proba.append(y_pred_proba[i][1])
+
+    df_final = st.session_state.df
+    df_final['y_proba'] = list_proba
+
+
+    # # Display the contents of the Excel file
+    # st.write('**Uploaded DataFrame:**')
+    # st.write(df_final)
+
+
+
+
