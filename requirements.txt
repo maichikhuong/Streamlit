@@ -1,6 +1,6 @@
-python
+# python
 streamlit
 pandas
 numpy
-sklearn
-pickle
+# sklearn
+# pickle
