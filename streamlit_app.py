@@ -7,13 +7,16 @@ import streamlit as st
 with open("model.pkl", "rb") as f:
     model = pickle.load(f)
 
-# Title of the web app
-def load_data():
-    st.title('Excel File Uploader')
-    uploaded_file = st.file_uploader("Upload file", type=["csv"])
-    return uploaded_file
+try: 
+    # Title of the web app
+    def load_data():
+        st.title('Excel File Uploader')
+        uploaded_file = st.file_uploader("Upload file", type=["csv"])
+        return uploaded_file
 
-uploaded_file = load_data()
+    uploaded_file = load_data()
+except:
+    st.write('Upload file have problem')
 
 if uploaded_file is not None:
     # Read the Excel file
@@ -48,10 +51,13 @@ if uploaded_file is not None:
 
             return X_sc
 
-    load_df = Processing(df = st.session_state.df)
-    df = load_df.one_hot(columns_dict=columns_dict)
-    X = load_df.feature_label(columns_dict=columns_dict)
-    X_sc = load_df.scale(X)
+    try: 
+        load_df = Processing(df = st.session_state.df)
+        df = load_df.one_hot(columns_dict=columns_dict)
+        X = load_df.feature_label(columns_dict=columns_dict)
+        X_sc = load_df.scale(X)
+    except: 
+        st.write("Processing have problem")
 
     y_pred = model.predict(X_sc)
     y_pred_proba = model.predict_proba(X_sc)
