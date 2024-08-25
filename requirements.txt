@@ -1,7 +1,7 @@
 python
 pandas
 numpy
-scikit-learn
-xgboost
-pickle
-streamlit
+# scikit-learn
+# xgboost
+# pickle
+# streamlit
